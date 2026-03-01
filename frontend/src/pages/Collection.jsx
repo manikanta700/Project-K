@@ -132,9 +132,9 @@ const Collection = () => {
                 className="w-3"
                 type="checkbox"
                 onChange={toggleSubCategory}
-                value={"Grains & Cereals"}
+                value={"Instant pickles"}
               />
-              Grains & Cereals
+              Instant pickles
             </p>
             <p className="flex gap-2">
               <input

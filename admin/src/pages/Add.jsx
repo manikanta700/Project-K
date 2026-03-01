@@ -7,10 +7,12 @@ import { toast } from "react-toastify";
 const categoryConfig = {
   "Food Products": {
     subCategories: [
-      "Grains & Cereals",
-      "Dry Fruits & Nuts",
-      "Spices & Herbs",
-      "Oils & Ghee",
+      "Instant pickles",
+      "Vegetarian pickles",
+      "Non-vegetarian pickles",
+      "Traditional powders",
+      "Sweets",
+      "Hots",
     ],
     sizes: ["100g", "250g", "500g", "1kg", "2kg", "5kg"],
     sizeLabel: "Available Weights & Prices",
@@ -46,7 +48,7 @@ const Add = ({ token }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("Food Products");
-  const [subCategory, setSubCategory] = useState("Grains & Cereals");
+  const [subCategory, setSubCategory] = useState("Instant pickles");
   const [bestseller, setBestseller] = useState(false);
   // sizes: [{size: "250g", price: 100}, ...]
   const [sizes, setSizes] = useState([]);
