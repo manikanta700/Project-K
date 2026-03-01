@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { ShopContext } from "../context/ShopContext";
 import { assets } from "../assets/assets";
@@ -23,17 +23,17 @@ const Product = () => {
     return productData.price; // min price (set by backend)
   };
 
-  const fetchProductData = () => {
+  const fetchProductData = useCallback(() => {
     const product = products.find((item) => item._id === productId);
     if (product) {
       setProductData(product);
-      setImage(product.images[0]); // Assuming `image` is an array of URLs
+      setImage(product.images[0]);
     }
-  };
+  }, [productId, products]);
 
   useEffect(() => {
     fetchProductData();
-  }, [productId, products]);
+  }, [fetchProductData]);
 
   return productData ? (
     <div className="border-t-2 pt-10 transition-opacity ease-in duration-500 opacity-100">

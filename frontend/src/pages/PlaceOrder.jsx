@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import LoadingSpinner from "../components/LoadingSpinner";
 import Title from "../components/Title";
 import CartTotal from "../components/CartTotal";

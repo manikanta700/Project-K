@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useCallback } from "react";
 import { ShopContext } from "../context/ShopContext";
 import Title from "../components/Title";
 import axios from "axios";
@@ -18,43 +18,46 @@ const Orders = () => {
   const [pageLoading, setPageLoading] = useState(true);
   const [trackingId, setTrackingId] = useState(null); // which item's track btn is loading
 
-  const loadOrderData = async (trackItemIndex = null) => {
-    try {
-      if (!token) return;
+  const loadOrderData = useCallback(
+    async (trackItemIndex = null) => {
+      try {
+        if (!token) return;
 
-      if (trackItemIndex !== null) setTrackingId(trackItemIndex);
-      else setPageLoading(true);
+        if (trackItemIndex !== null) setTrackingId(trackItemIndex);
+        else setPageLoading(true);
 
-      const response = await axios.post(
-        backendUrl + "/api/order/userorders",
-        {},
-        { headers: { token } },
-      );
+        const response = await axios.post(
+          backendUrl + "/api/order/userorders",
+          {},
+          { headers: { token } },
+        );
 
-      if (response.data.success) {
-        let allOrderItems = [];
-        response.data.orders.forEach((order) => {
-          order.items.forEach((item) => {
-            item["status"] = order.status;
-            item["payment"] = order.payment;
-            item["paymentMethod"] = order.paymentMethod;
-            item["date"] = order.date;
-            allOrderItems.push(item);
+        if (response.data.success) {
+          let allOrderItems = [];
+          response.data.orders.forEach((order) => {
+            order.items.forEach((item) => {
+              item["status"] = order.status;
+              item["payment"] = order.payment;
+              item["paymentMethod"] = order.paymentMethod;
+              item["date"] = order.date;
+              allOrderItems.push(item);
+            });
           });
-        });
-        setOrderData(allOrderItems.reverse());
+          setOrderData(allOrderItems.reverse());
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setPageLoading(false);
+        setTrackingId(null);
       }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setPageLoading(false);
-      setTrackingId(null);
-    }
-  };
+    },
+    [token, backendUrl],
+  );
 
   useEffect(() => {
     loadOrderData();
-  }, [token]);
+  }, [token, loadOrderData]);
 
   return (
     <div className="border-t pt-16">

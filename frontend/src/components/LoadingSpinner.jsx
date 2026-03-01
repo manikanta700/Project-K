@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 const LoadingSpinner = ({ size = "sm", color = "white" }) => {
   const sizeClass = {
     xs: "w-3 h-3 border-[1.5px]",
@@ -18,6 +20,11 @@ const LoadingSpinner = ({ size = "sm", color = "white" }) => {
       className={`inline-block rounded-full animate-spin ${sizeClass} ${colorClass}`}
     />
   );
+};
+
+LoadingSpinner.propTypes = {
+  size: PropTypes.oneOf(["xs", "sm", "md", "lg"]),
+  color: PropTypes.oneOf(["white", "black", "gray", "green"]),
 };
 
 export default LoadingSpinner;
