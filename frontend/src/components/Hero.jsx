@@ -42,10 +42,10 @@ const Hero = () => {
       </div>
 
       {/* Right Side - Image */}
-      <div className="w-full sm:w-1/2 order-1 sm:order-2">
+      <div className="w-full sm:w-1/2 order-1 sm:order-2 h-full">
         <img
-          className="w-full h-56 sm:h-full object-cover"
-          src={assets.hero_img}
+          className="w-full h-full object-contain scale-125 -translate-y-4"
+          src={assets.baner}
           alt="Fresh Natural Products"
         />
       </div>
