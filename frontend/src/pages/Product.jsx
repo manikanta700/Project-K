@@ -1,15 +1,25 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { ShopContext } from '../context/ShopContext';
-import { assets } from '../assets/assets';
-import RelatedProducts from '../components/RelatedProducts';
+import React, { useContext, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { ShopContext } from "../context/ShopContext";
+import { assets } from "../assets/assets";
+import RelatedProducts from "../components/RelatedProducts";
 
 const Product = () => {
   const { productId } = useParams();
   const { products, currency, addToCart } = useContext(ShopContext);
   const [productData, setProductData] = useState(null);
-  const [image, setImage] = useState('');
-  const [size, setSize] = useState('');
+  const [image, setImage] = useState("");
+  const [size, setSize] = useState("");
+
+  // Get price for the currently selected size, or show min price
+  const getDisplayPrice = () => {
+    if (!productData) return 0;
+    if (size) {
+      const sizeObj = productData.sizes.find((s) => s.size === size);
+      return sizeObj ? sizeObj.price : productData.price;
+    }
+    return productData.price; // min price (set by backend)
+  };
 
   const fetchProductData = () => {
     const product = products.find((item) => item._id === productId);
@@ -37,7 +47,7 @@ const Product = () => {
                 src={item}
                 key={index}
                 className={`w-24 h-24 object-cover cursor-pointer border ${
-                  image === item ? 'border-orange-500' : 'border-gray-200'
+                  image === item ? "border-orange-500" : "border-gray-200"
                 }`}
                 alt={`Thumbnail ${index + 1}`}
               />
@@ -45,7 +55,11 @@ const Product = () => {
           </div>
           {/* Main Image */}
           <div className="w-full sm:w-[80%]">
-            <img src={image} className="w-full h-auto border border-gray-200" alt="Main Product" />
+            <img
+              src={image}
+              className="w-full h-auto border border-gray-200"
+              alt="Main Product"
+            />
           </div>
         </div>
 
@@ -57,38 +71,61 @@ const Product = () => {
             <img src={assets.star_icon} className="w-3.5" alt="Star" />
             <img src={assets.star_icon} className="w-3.5" alt="Star" />
             <img src={assets.star_icon} className="w-3.5" alt="Star" />
-            <img src={assets.star_dull_icon} className="w-3.5" alt="Dull Star" />
+            <img
+              src={assets.star_dull_icon}
+              className="w-3.5"
+              alt="Dull Star"
+            />
             <p className="pl-2">122</p>
           </div>
           <p className="mt-5 text-3xl font-medium">
+            {!size && <span className="text-lg text-gray-400 mr-1">From</span>}
             {currency}
-            {productData.price}
+            {getDisplayPrice()}
           </p>
           <p className="mt-5 text-gray-500">{productData.description}</p>
           <div className="flex flex-col gap-4 my-8">
-            <p>Select Size</p>
+            <p>
+              Select Pack Size{" "}
+              {size && (
+                <span className="text-sm text-green-600 font-normal">
+                  — {currency}
+                  {getDisplayPrice()}
+                </span>
+              )}
+            </p>
             <div className="flex gap-2">
               {productData.sizes.map((item, index) => (
                 <button
-                  onClick={() => setSize(item)}
+                  onClick={() => setSize(item.size)}
                   key={index}
-                  className={`bg-gray-100 py-2 px-4 border ${
-                    item === size ? 'border-orange-500' : ''
+                  className={`bg-gray-100 py-2 px-4 border flex flex-col items-center gap-0.5 ${
+                    item.size === size ? "border-orange-500" : ""
                   }`}
                 >
-                  {item}
+                  <span>{item.size}</span>
+                  <span className="text-xs text-gray-500">
+                    {currency}
+                    {item.price}
+                  </span>
                 </button>
               ))}
             </div>
           </div>
-          <button onClick={()=> addToCart(productData._id, size)} className="bg-black text-white px-8 py-3 text-sm active:bg-gray-700">
+          <button
+            onClick={() => addToCart(productData._id, size)}
+            disabled={!size}
+            className="bg-black text-white px-8 py-3 text-sm active:bg-gray-700"
+          >
             ADD TO CART
           </button>
           <hr className="mt-8 sm:w-4/5" />
           <div className="text-sm text-gray-500 mt-5 flex flex-col gap-1">
-            <p>100% Original product.</p>
-            <p>Cash on delivery is available on this product.</p>
-            <p>Easy return & exchange policy within 7 days.</p>
+            <p>
+              100% Natural & Organic — no artificial additives or preservatives.
+            </p>
+            <p>Cash on delivery available on this product.</p>
+            <p>Freshness guaranteed or easy return within 7 days.</p>
           </div>
         </div>
       </div>

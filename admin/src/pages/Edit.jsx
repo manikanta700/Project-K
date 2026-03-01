@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { assets } from "../assets/assets";
 import axios from "axios";
 import { backendUrl } from "../App";
 import { toast } from "react-toastify";
+import { useParams, useNavigate } from "react-router-dom";
 
 const categoryConfig = {
   "Food Products": {
@@ -37,11 +38,18 @@ const categoryConfig = {
   },
 };
 
-const Add = ({ token }) => {
-  const [image1, setImage1] = useState(false);
-  const [image2, setImage2] = useState(false);
-  const [image3, setImage3] = useState(false);
-  const [image4, setImage4] = useState(false);
+const Edit = ({ token }) => {
+  const { productId } = useParams();
+  const navigate = useNavigate();
+
+  const [loading, setLoading] = useState(true);
+
+  // Image states — null means keep existing, File means replace
+  const [image1, setImage1] = useState(null);
+  const [image2, setImage2] = useState(null);
+  const [image3, setImage3] = useState(null);
+  const [image4, setImage4] = useState(null);
+  const [existingImages, setExistingImages] = useState([]);
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -51,7 +59,43 @@ const Add = ({ token }) => {
   // sizes: [{size: "250g", price: 100}, ...]
   const [sizes, setSizes] = useState([]);
 
-  const currentConfig = categoryConfig[category];
+  const currentConfig =
+    categoryConfig[category] || categoryConfig["Food Products"];
+
+  // Fetch product data on mount
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const response = await axios.post(
+          `${backendUrl}/api/product/single`,
+          { productId },
+          { headers: { token } },
+        );
+        if (response.data.success) {
+          const p = response.data.product;
+          setName(p.name);
+          setDescription(p.description);
+          setCategory(p.category);
+          setSubCategory(p.subCategory);
+          setBestseller(p.bestseller);
+          setExistingImages(p.images || []);
+          // Support both old string[] and new {size, price}[] formats
+          if (p.sizes && p.sizes.length > 0 && typeof p.sizes[0] === "object") {
+            setSizes(p.sizes.map((s) => ({ size: s.size, price: s.price })));
+          } else {
+            setSizes([]);
+          }
+        } else {
+          toast.error(response.data.message);
+        }
+      } catch {
+        toast.error("Failed to load product");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProduct();
+  }, [productId, token]);
 
   const handleCategoryChange = (e) => {
     const newCategory = e.target.value;
@@ -78,6 +122,12 @@ const Add = ({ token }) => {
 
   const isSizeSelected = (sizeName) => sizes.some((s) => s.size === sizeName);
 
+  const getImagePreview = (newFile, existingUrl) => {
+    if (newFile) return URL.createObjectURL(newFile);
+    if (existingUrl) return existingUrl;
+    return assets.upload_area;
+  };
+
   const onSubmitHandler = async (e) => {
     e.preventDefault();
 
@@ -96,6 +146,7 @@ const Add = ({ token }) => {
 
     try {
       const formData = new FormData();
+      formData.append("id", productId);
       formData.append("name", name);
       formData.append("description", description);
       formData.append("category", category);
@@ -103,27 +154,20 @@ const Add = ({ token }) => {
       formData.append("bestseller", bestseller);
       formData.append("sizes", JSON.stringify(sizes));
 
-      image1 && formData.append("image1", image1);
-      image2 && formData.append("image2", image2);
-      image3 && formData.append("image3", image3);
-      image4 && formData.append("image4", image4);
+      if (image1) formData.append("image1", image1);
+      if (image2) formData.append("image2", image2);
+      if (image3) formData.append("image3", image3);
+      if (image4) formData.append("image4", image4);
 
       const response = await axios.post(
-        backendUrl + "/api/product/add",
+        `${backendUrl}/api/product/update`,
         formData,
         { headers: { token } },
       );
 
       if (response.data.success) {
-        toast.success(response.data.message);
-        setName("");
-        setDescription("");
-        setImage1(false);
-        setImage2(false);
-        setImage3(false);
-        setImage4(false);
-        setSizes([]);
-        setBestseller(false);
+        toast.success("Product updated successfully!");
+        navigate("/list");
       } else {
         toast.error(response.data.message);
       }
@@ -133,27 +177,74 @@ const Add = ({ token }) => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-40">
+        <p className="text-gray-500">Loading product...</p>
+      </div>
+    );
+  }
+
   return (
     <form
       onSubmit={onSubmitHandler}
       className="flex flex-col w-full items-start gap-5"
     >
+      <div className="flex items-center gap-4 w-full">
+        <button
+          type="button"
+          onClick={() => navigate("/list")}
+          className="text-sm text-gray-500 hover:text-black flex items-center gap-1"
+        >
+          ← Back to List
+        </button>
+        <h2 className="text-xl font-semibold text-gray-700">Edit Product</h2>
+      </div>
+
       {/* Image Upload */}
       <div>
         <p className="mb-2 font-medium">Product Images</p>
+        <p className="text-xs text-gray-400 mb-3">
+          Click an image to replace it. Leave unchanged to keep existing.
+        </p>
         <div className="flex gap-3">
           {[
-            { id: "image1", state: image1, setter: setImage1 },
-            { id: "image2", state: image2, setter: setImage2 },
-            { id: "image3", state: image3, setter: setImage3 },
-            { id: "image4", state: image4, setter: setImage4 },
-          ].map(({ id, state, setter }) => (
-            <label key={id} htmlFor={id} className="cursor-pointer">
+            {
+              id: "edit-image1",
+              newFile: image1,
+              setter: setImage1,
+              existing: existingImages[0],
+            },
+            {
+              id: "edit-image2",
+              newFile: image2,
+              setter: setImage2,
+              existing: existingImages[1],
+            },
+            {
+              id: "edit-image3",
+              newFile: image3,
+              setter: setImage3,
+              existing: existingImages[2],
+            },
+            {
+              id: "edit-image4",
+              newFile: image4,
+              setter: setImage4,
+              existing: existingImages[3],
+            },
+          ].map(({ id, newFile, setter, existing }) => (
+            <label key={id} htmlFor={id} className="cursor-pointer relative">
               <img
-                className="w-20 h-20 object-cover border border-dashed border-gray-300"
-                src={!state ? assets.upload_area : URL.createObjectURL(state)}
-                alt="Upload"
+                className="w-20 h-20 object-cover border border-dashed border-gray-300 hover:border-black transition-colors"
+                src={getImagePreview(newFile, existing)}
+                alt="Product"
               />
+              {existing && !newFile && (
+                <span className="absolute bottom-0 left-0 right-0 text-center text-[9px] bg-black bg-opacity-50 text-white py-0.5">
+                  existing
+                </span>
+              )}
               <input
                 onChange={(e) => setter(e.target.files[0])}
                 type="file"
@@ -231,7 +322,6 @@ const Add = ({ token }) => {
             const sizeObj = sizes.find((s) => s.size === sizeName);
             return (
               <div key={sizeName} className="flex flex-col items-center gap-1">
-                {/* Size toggle button */}
                 <div
                   onClick={() => toggleSize(sizeName)}
                   className={`px-4 py-2 rounded cursor-pointer border text-sm font-medium transition-colors ${
@@ -242,7 +332,6 @@ const Add = ({ token }) => {
                 >
                   {sizeName}
                 </div>
-                {/* Price input - only shown when size is selected */}
                 {selected && (
                   <input
                     type="number"
@@ -258,12 +347,13 @@ const Add = ({ token }) => {
             );
           })}
         </div>
+
         {sizes.length === 0 && (
           <p className="text-xs text-red-400 mt-2">
             Select at least one option and set its price.
           </p>
         )}
-        {/* Summary of selected sizes */}
+
         {sizes.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-2">
             {sizes.map((s) => (
@@ -291,11 +381,23 @@ const Add = ({ token }) => {
         </label>
       </div>
 
-      <button className="w-36 py-3 bg-black text-white text-sm rounded">
-        ADD PRODUCT
-      </button>
+      <div className="flex gap-3">
+        <button
+          type="submit"
+          className="w-36 py-3 bg-black text-white text-sm rounded"
+        >
+          UPDATE PRODUCT
+        </button>
+        <button
+          type="button"
+          onClick={() => navigate("/list")}
+          className="w-36 py-3 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300"
+        >
+          CANCEL
+        </button>
+      </div>
     </form>
   );
 };
 
-export default Add;
+export default Edit;
