@@ -34,7 +34,7 @@ const Footer = () => {
       <div>
         <hr />
         <p className="py-5 text-sm text-center text-gray-500">
-          Copyright 2024 © purenature.in — All rights reserved.
+          Copyright 2027 © purenature.in — All rights reserved.
         </p>
       </div>
     </div>
