@@ -9,7 +9,6 @@ const ShopContextProvider = (props) => {
   const currency = "₹";
   const delivery_fee = 10;
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
-  console.log(backendUrl);
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [cartItems, setCartItems] = useState({});
@@ -19,7 +18,7 @@ const ShopContextProvider = (props) => {
 
   const addToCart = async (itemId, size) => {
     if (!size) {
-      toast.error("Select Product Size");
+      toast.error("Select a pack size first");
       return;
     }
     let cartData = structuredClone(cartItems);
@@ -34,11 +33,14 @@ const ShopContextProvider = (props) => {
       cartData[itemId][size] = 1;
     }
     setCartItems(cartData);
+    toast.success("Added to cart!", {
+      position: "bottom-right",
+      autoClose: 1500,
+      hideProgressBar: true,
+      icon: "🛒",
+    });
     if (token) {
       try {
-        console.log(token);
-        console.log(itemId);
-        console.log(size);
         await axios.post(
           backendUrl + "/api/cart/add",
           { itemId, size },

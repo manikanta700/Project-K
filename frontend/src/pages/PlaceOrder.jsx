@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react";
+import LoadingSpinner from "../components/LoadingSpinner";
 import Title from "../components/Title";
 import CartTotal from "../components/CartTotal";
 import { assets } from "../assets/assets";
@@ -19,6 +20,7 @@ const PlaceOrder = () => {
     products,
   } = useContext(ShopContext);
   const [method, setMethod] = useState("cod");
+  const [loading, setLoading] = useState(false);
 
   const initPay = (order) => {
     const options = {
@@ -71,6 +73,7 @@ const PlaceOrder = () => {
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
+    setLoading(true);
     try {
       let orderItems = [];
 
@@ -130,6 +133,8 @@ const PlaceOrder = () => {
     } catch (error) {
       console.error(error);
       toast.error(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -278,9 +283,17 @@ const PlaceOrder = () => {
           <div className="w-full text-end mt-8">
             <button
               type="submit"
-              className="bg-black text-white px-16 py-3 text-sm"
+              disabled={loading}
+              className="bg-black text-white px-16 py-3 text-sm disabled:opacity-70 inline-flex items-center gap-2 justify-center min-w-[160px]"
             >
-              PLACE ORDER
+              {loading ? (
+                <>
+                  <LoadingSpinner size="sm" color="white" />
+                  Processing...
+                </>
+              ) : (
+                "PLACE ORDER"
+              )}
             </button>
           </div>
         </div>

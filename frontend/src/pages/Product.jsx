@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { ShopContext } from "../context/ShopContext";
 import { assets } from "../assets/assets";
 import RelatedProducts from "../components/RelatedProducts";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const Product = () => {
   const { productId } = useParams();
@@ -10,6 +11,7 @@ const Product = () => {
   const [productData, setProductData] = useState(null);
   const [image, setImage] = useState("");
   const [size, setSize] = useState("");
+  const [cartLoading, setCartLoading] = useState(false);
 
   // Get price for the currently selected size, or show min price
   const getDisplayPrice = () => {
@@ -113,11 +115,23 @@ const Product = () => {
             </div>
           </div>
           <button
-            onClick={() => addToCart(productData._id, size)}
-            disabled={!size}
-            className="bg-black text-white px-8 py-3 text-sm active:bg-gray-700"
+            onClick={async () => {
+              if (!size || cartLoading) return;
+              setCartLoading(true);
+              await addToCart(productData._id, size);
+              setCartLoading(false);
+            }}
+            disabled={!size || cartLoading}
+            className="bg-black text-white px-8 py-3 text-sm active:bg-gray-700 disabled:opacity-60 flex items-center gap-2"
           >
-            ADD TO CART
+            {cartLoading ? (
+              <>
+                <LoadingSpinner size="sm" color="white" />
+                Adding...
+              </>
+            ) : (
+              "ADD TO CART"
+            )}
           </button>
           <hr className="mt-8 sm:w-4/5" />
           <div className="text-sm text-gray-500 mt-5 flex flex-col gap-1">
