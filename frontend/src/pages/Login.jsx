@@ -1,51 +1,32 @@
-import { useState, useContext, useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { ShopContext } from "../context/ShopContext";
+import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import { toast } from "react-toastify";
-import LoadingSpinner from "../components/LoadingSpinner";
 
 const Login = () => {
-  const [currentState, setCurrentState] = useState("Sign Up");
   const { token, setToken, navigate, backendUrl } = useContext(ShopContext);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  const onSubmitHandler = async (event) => {
-    event.preventDefault();
-    setLoading(true);
+  const handleGoogleSuccess = async (credentialResponse) => {
     try {
-      if (currentState === "Sign Up") {
-        const response = await axios.post(backendUrl + "/api/user/register", {
-          name,
-          email,
-          password,
-        });
-        if (response.data.success) {
-          setToken(response.data.token);
-          localStorage.setItem("token", response.data.token);
-        } else {
-          toast.error(response.data.message);
-        }
+      const response = await axios.post(backendUrl + "/api/user/google", {
+        credential: credentialResponse.credential,
+      });
+      if (response.data.success) {
+        setToken(response.data.token);
+        localStorage.setItem("token", response.data.token);
+        toast.success("Welcome! Signed in with Google.");
       } else {
-        const response = await axios.post(backendUrl + "/api/user/login", {
-          email,
-          password,
-        });
-        if (response.data.success) {
-          setToken(response.data.token);
-          localStorage.setItem("token", response.data.token);
-        } else {
-          toast.error(response.data.message);
-        }
+        toast.error(response.data.message);
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.message);
-    } finally {
-      setLoading(false);
+      toast.error("Google Sign-In failed. Please try again.");
     }
+  };
+
+  const handleGoogleError = () => {
+    toast.error("Google Sign-In was cancelled or failed.");
   };
 
   useEffect(() => {
@@ -62,84 +43,39 @@ const Login = () => {
           <div className="inline-flex items-center justify-center w-14 h-14 bg-[#e8f5ee] rounded-2xl mb-4 text-2xl">
             🌿
           </div>
-          <h1 className="prata-regular text-2xl text-gray-900">
-            {currentState === "Login" ? "Welcome Back" : "Create Account"}
-          </h1>
+          <h1 className="prata-regular text-2xl text-gray-900">Welcome to PureNature</h1>
           <p className="text-gray-400 text-sm mt-1">
-            {currentState === "Login"
-              ? "Sign in to your PureNature account"
-              : "Join our natural living community"}
+            Sign in to continue to your account
           </p>
         </div>
 
-        <form onSubmit={onSubmitHandler} className="flex flex-col gap-4">
-          {currentState !== "Login" && (
-            <input
-              onChange={(e) => setName(e.target.value)}
-              value={name}
-              type="text"
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm outline-none focus:border-[#2d7a4f] transition-colors bg-gray-50 focus:bg-white"
-              placeholder="Your full name"
-              required
-            />
-          )}
+        {/* Divider */}
+        <div className="flex items-center gap-3 mb-6">
+          <div className="flex-1 h-px bg-gray-200" />
+          <span className="text-xs text-gray-400 uppercase tracking-wide">Sign in with</span>
+          <div className="flex-1 h-px bg-gray-200" />
+        </div>
 
-          <input
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
-            type="email"
-            className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm outline-none focus:border-[#2d7a4f] transition-colors bg-gray-50 focus:bg-white"
-            placeholder="Email address"
-            required
+        {/* Google Sign-In Button */}
+        <div className="flex justify-center">
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={handleGoogleError}
+            size="large"
+            shape="pill"
+            text="signin_with"
+            theme="outline"
+            logo_alignment="left"
+            width="320"
           />
+        </div>
 
-          <input
-            onChange={(e) => setPassword(e.target.value)}
-            value={password}
-            type="password"
-            className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm outline-none focus:border-[#2d7a4f] transition-colors bg-gray-50 focus:bg-white"
-            placeholder="Password"
-            required
-          />
-
-          <div className="flex justify-between text-xs text-gray-500 mt-1">
-            <span className="cursor-pointer hover:text-[#2d7a4f] transition-colors">
-              Forgot password?
-            </span>
-            {currentState === "Login" ? (
-              <span
-                onClick={() => setCurrentState("Sign Up")}
-                className="cursor-pointer text-[#2d7a4f] font-medium hover:underline"
-              >
-                Create account →
-              </span>
-            ) : (
-              <span
-                onClick={() => setCurrentState("Login")}
-                className="cursor-pointer text-[#2d7a4f] font-medium hover:underline"
-              >
-                Login here →
-              </span>
-            )}
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-[#2d7a4f] text-white font-semibold py-3 rounded-xl hover:bg-[#235f3d] active:scale-95 transition-all disabled:opacity-70 flex items-center justify-center gap-2 mt-2 text-sm"
-          >
-            {loading ? (
-              <>
-                <LoadingSpinner size="sm" color="white" />
-                <span>Please wait…</span>
-              </>
-            ) : currentState === "Login" ? (
-              "Sign In"
-            ) : (
-              "Create Account"
-            )}
-          </button>
-        </form>
+        <p className="text-center text-xs text-gray-400 mt-6">
+          By signing in, you agree to our{" "}
+          <span className="text-[#2d7a4f] cursor-pointer hover:underline">Terms of Service</span>{" "}
+          and{" "}
+          <span className="text-[#2d7a4f] cursor-pointer hover:underline">Privacy Policy</span>.
+        </p>
       </div>
     </div>
   );

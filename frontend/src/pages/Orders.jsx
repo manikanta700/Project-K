@@ -3,6 +3,7 @@ import { ShopContext } from "../context/ShopContext";
 import Title from "../components/Title";
 import axios from "axios";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { toast } from "react-toastify";
 
 const STATUS_CONFIG = {
   "Order Placed": { dot: "bg-blue-500", pill: "bg-blue-50 text-blue-600" },
@@ -12,18 +13,21 @@ const STATUS_CONFIG = {
   "Delivered": { dot: "bg-green-500", pill: "bg-green-50 text-green-600" },
 };
 
+const COURIER_TRACKING_URLS = {
+  "DTDC": (id) => `https://www.dtdc.in/trace.asp?trackingNumber=${id}`,
+  "India Post": (id) => `https://www.indiapost.gov.in/vas/SitePages/TrackConsignment.aspx?trackId=${id}`,
+};
+
 const Orders = () => {
   const { backendUrl, token, currency } = useContext(ShopContext);
   const [orderData, setOrderData] = useState([]);
   const [pageLoading, setPageLoading] = useState(true);
-  const [trackingId, setTrackingId] = useState(null);
 
   const loadOrderData = useCallback(
-    async (trackItemIndex = null) => {
+    async () => {
       try {
         if (!token) return;
-        if (trackItemIndex !== null) setTrackingId(trackItemIndex);
-        else setPageLoading(true);
+        setPageLoading(true);
 
         const response = await axios.post(
           backendUrl + "/api/order/userorders",
@@ -32,14 +36,20 @@ const Orders = () => {
         );
 
         if (response.data.success) {
-          let allOrderItems = [];
+          // Keep full order info (not broken down per item) for orderId/tracking access
+          const allOrderItems = [];
           response.data.orders.forEach((order) => {
             order.items.forEach((item) => {
-              item["status"] = order.status;
-              item["payment"] = order.payment;
-              item["paymentMethod"] = order.paymentMethod;
-              item["date"] = order.date;
-              allOrderItems.push(item);
+              allOrderItems.push({
+                ...item,
+                status: order.status,
+                payment: order.payment,
+                paymentMethod: order.paymentMethod,
+                date: order.date,
+                orderId: order.orderId || order._id?.slice(-6).toUpperCase(),
+                trackingId: order.trackingId || "",
+                courier: order.courier || "",
+              });
             });
           });
           setOrderData(allOrderItems.reverse());
@@ -48,7 +58,6 @@ const Orders = () => {
         console.log(error);
       } finally {
         setPageLoading(false);
-        setTrackingId(null);
       }
     },
     [token, backendUrl],
@@ -57,6 +66,16 @@ const Orders = () => {
   useEffect(() => {
     loadOrderData();
   }, [token, loadOrderData]);
+
+  const handleTrackOrder = (item) => {
+    const getUrl = COURIER_TRACKING_URLS[item.courier];
+    if (getUrl && item.trackingId) {
+      window.open(getUrl(item.trackingId), "_blank", "noopener,noreferrer");
+    } else if (item.trackingId) {
+      // Fallback wildcard link: just search Google for the tracking ID
+      window.open(`https://www.google.com/search?q=${item.trackingId}+tracking`, "_blank", "noopener,noreferrer");
+    }
+  };
 
   return (
     <div className="pt-10 pb-20">
@@ -90,6 +109,7 @@ const Orders = () => {
         <div className="flex flex-col gap-4">
           {orderData.map((item, index) => {
             const statusCfg = STATUS_CONFIG[item.status] || { dot: "bg-gray-400", pill: "bg-gray-50 text-gray-600" };
+            const canTrack = !!(item.trackingId && item.courier && COURIER_TRACKING_URLS[item.courier]);
             return (
               <div key={index} className="card p-4 flex flex-col sm:flex-row sm:items-center gap-4">
                 {/* Image */}
@@ -101,6 +121,12 @@ const Orders = () => {
 
                 {/* Details */}
                 <div className="flex-1 min-w-0">
+                  {/* Order ID */}
+                  {item.orderId && (
+                    <p className="text-xs font-mono text-[#2d7a4f] bg-[#e8f5ee] px-2 py-0.5 rounded-md w-fit mb-1.5">
+                      #{item.orderId}
+                    </p>
+                  )}
                   <p className="font-semibold text-gray-800 text-sm sm:text-base line-clamp-2">
                     {item.name}
                   </p>
@@ -125,6 +151,15 @@ const Orders = () => {
                     </span>{" "}
                     via {item.paymentMethod}
                   </p>
+                  {/* Tracking info badge */}
+                  {canTrack && (
+                    <p className="text-xs text-gray-400 mt-0.5">
+                      Courier:{" "}
+                      <span className="text-gray-600 font-medium">{item.courier}</span>
+                      {" · "}
+                      <span className="font-mono text-gray-600">{item.trackingId}</span>
+                    </p>
+                  )}
                 </div>
 
                 {/* Status + Track */}
@@ -133,20 +168,29 @@ const Orders = () => {
                     <span className={`w-1.5 h-1.5 rounded-full ${statusCfg.dot}`} />
                     {item.status}
                   </span>
-                  <button
-                    onClick={() => loadOrderData(index)}
-                    disabled={trackingId !== null}
-                    className="border border-gray-200 text-gray-600 text-xs px-4 py-2 rounded-xl hover:bg-gray-50 transition-colors disabled:opacity-60 flex items-center gap-1.5 whitespace-nowrap min-w-[110px] justify-center"
-                  >
-                    {trackingId === index ? (
-                      <>
-                        <LoadingSpinner size="sm" color="black" />
-                        Tracking…
-                      </>
-                    ) : (
-                      "Track Order"
-                    )}
-                  </button>
+
+                  {item.status === "Shipped" || item.status === "Out for delivery" ? (
+                    <button
+                      onClick={() => {
+                        if (item.trackingId) {
+                          handleTrackOrder(item);
+                        } else {
+                          toast.info("Tracking ID will be updated shortly.");
+                        }
+                      }}
+                      className="border border-[#2d7a4f] text-[#2d7a4f] text-xs px-4 py-2 rounded-xl hover:bg-[#e8f5ee] transition-colors flex items-center gap-1.5 whitespace-nowrap min-w-[110px] justify-center font-medium"
+                    >
+                      🚚 Track Order
+                    </button>
+                  ) : (
+                    <button
+                      disabled
+                      className="border border-gray-200 text-gray-300 text-xs px-4 py-2 rounded-xl cursor-not-allowed flex items-center gap-1.5 whitespace-nowrap min-w-[110px] justify-center"
+                      title="Tracking not available yet"
+                    >
+                      Track Order
+                    </button>
+                  )}
                 </div>
               </div>
             );

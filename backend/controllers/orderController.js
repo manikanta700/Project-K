@@ -3,6 +3,9 @@ import userModel from "../models/userModel.js";
 import Razorpay from "razorpay";
 import crypto from "crypto";
 
+// Helper to generate short order ID
+const generateOrderId = (mongoId) => 'ORD-' + mongoId.toString().slice(-6).toUpperCase();
+
 // Placing orders using COD method
 const placeOrder = async (req, res) => {
   try {
@@ -18,6 +21,10 @@ const placeOrder = async (req, res) => {
     };
     const newOrder = new orderModel(orderData);
     await newOrder.save();
+    // Set short orderId
+    newOrder.orderId = generateOrderId(newOrder._id);
+    await newOrder.save();
+
     await userModel.findByIdAndUpdate(userId, { cartData: {} });
     res.json({ success: true, message: "Order Placed" });
   } catch (error) {
@@ -27,7 +34,7 @@ const placeOrder = async (req, res) => {
 };
 
 // Placing orders using Stripe method
-const placeOrderStripe = async (req, res) => {};
+const placeOrderStripe = async (req, res) => { };
 
 // Placing orders using Razorpay method
 const placeOrderRazorpay = async (req, res) => {
@@ -51,9 +58,12 @@ const placeOrderRazorpay = async (req, res) => {
 
     const newOrder = new orderModel(orderData);
     await newOrder.save();
+    // Set short orderId
+    newOrder.orderId = generateOrderId(newOrder._id);
+    await newOrder.save();
 
     const options = {
-      amount: amount * 100, // Razorpay uses paise (smallest currency unit)
+      amount: amount * 100,
       currency: process.env.CURRENCY || "INR",
       receipt: newOrder._id.toString(),
     };
@@ -89,7 +99,6 @@ const verifyRazorpay = async (req, res) => {
       razorpay_signature,
     } = req.body;
 
-    // Verify signature
     const sign = razorpay_order_id + "|" + razorpay_payment_id;
     const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_SECRET)
@@ -103,7 +112,6 @@ const verifyRazorpay = async (req, res) => {
       });
     }
 
-    // Fetch order from Razorpay to get the receipt (our order _id)
     const orderInfo = await razorpayInstance.orders.fetch(razorpay_order_id);
 
     if (orderInfo.status === "paid") {
@@ -142,11 +150,14 @@ const userOrders = async (req, res) => {
   }
 };
 
-// Update order status
+// Update order status (+ optional tracking info)
 const updateStatus = async (req, res) => {
   try {
-    const { orderId, status } = req.body;
-    await orderModel.findByIdAndUpdate(orderId, { status });
+    const { orderId, status, trackingId, courier } = req.body;
+    const updateData = { status };
+    if (trackingId !== undefined) updateData.trackingId = trackingId;
+    if (courier !== undefined) updateData.courier = courier;
+    await orderModel.findByIdAndUpdate(orderId, updateData);
     res.json({ success: true, message: "Order Status Updated" });
   } catch (error) {
     console.log(error);
