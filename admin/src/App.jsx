@@ -33,7 +33,11 @@ const App = () => {
           <hr />
           <div className="flex w-full">
             <Sidebar />
-            <div className="flex-1 mx-8 my-8 text-gray-700 text-base">
+            {/* 
+              - pb-20 md:pb-0  → leave room for the mobile bottom nav bar
+              - mx-4 my-4 md:mx-8 md:my-8 → smaller margins on phones
+            */}
+            <div className="flex-1 mx-4 my-4 md:mx-8 md:my-8 pb-20 md:pb-0 text-gray-700 text-base min-w-0">
               <Routes>
                 <Route path="/add" element={<Add token={token} />} />
                 <Route path="/list" element={<List token={token} />} />

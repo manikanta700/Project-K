@@ -65,7 +65,6 @@ const List = () => {
       );
       if (response.data.success) {
         toast.success(response.data.message);
-        // Update locally without full refetch for better UX
         setList((prev) =>
           prev.map((item) =>
             item._id === id ? { ...item, inStock: !currentStatus } : item,
@@ -84,7 +83,8 @@ const List = () => {
     <>
       <p className="mb-2 font-semibold text-gray-700">All Products List</p>
       <div className="flex flex-col gap-2">
-        {/* Table Header */}
+
+        {/* ── Desktop table header (md+) ── */}
         <div className="hidden md:grid grid-cols-[1fr_3fr_1fr_1fr_1fr_1fr_1fr] items-center py-2 px-3 border bg-gray-100 text-sm font-semibold text-gray-600">
           <span>Image</span>
           <span>Name</span>
@@ -95,79 +95,122 @@ const List = () => {
           <span className="text-center">Delete</span>
         </div>
 
-        {/* Product Rows */}
+        {/* ── Product rows ── */}
         {list.map((item, index) => (
           <div
             key={index}
-            className={`grid grid-cols-[1fr_3fr_1fr] md:grid-cols-[1fr_3fr_1fr_1fr_1fr_1fr_1fr] items-center gap-2 py-2 px-3 border text-sm ${
-              !item.inStock ? "bg-red-50 border-red-200" : "bg-white"
-            }`}
+            className={`border rounded-lg md:rounded-none text-sm ${!item.inStock ? "bg-red-50 border-red-200" : "bg-white border-gray-200"
+              }`}
           >
-            {/* Image */}
-            <div className="relative">
-              <img
-                className={`w-12 h-12 object-cover rounded ${
-                  !item.inStock ? "opacity-50 grayscale" : ""
-                }`}
-                src={item.images?.[0] || "/placeholder.png"}
-                alt={item.name}
-              />
-              {!item.inStock && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] px-1 py-0.5 rounded font-bold">
-                  OUT
-                </span>
-              )}
-            </div>
-
-            {/* Name */}
-            <div>
-              <p className="font-medium text-gray-800">{item.name}</p>
-              <p className="text-xs text-gray-400">{item.subCategory}</p>
-            </div>
-
-            {/* Category */}
-            <p className="text-gray-600">{item.category}</p>
-
-            {/* Price */}
-            <p className="text-gray-700">
-              From {currency}
-              {item.price}
-            </p>
-
-            {/* Stock Toggle */}
-            <div className="flex justify-center">
-              <button
-                onClick={() => toggleStock(item._id, item.inStock)}
-                className={`px-3 py-1 rounded-full text-xs font-semibold border transition-all ${
-                  item.inStock
-                    ? "bg-green-100 text-green-700 border-green-400 hover:bg-red-100 hover:text-red-600 hover:border-red-400"
-                    : "bg-red-100 text-red-600 border-red-400 hover:bg-green-100 hover:text-green-700 hover:border-green-400"
-                }`}
-                title={
-                  item.inStock
-                    ? "Click to mark Out of Stock"
-                    : "Click to mark In Stock"
-                }
+            {/* Desktop row (md+) */}
+            <div className="hidden md:grid grid-cols-[1fr_3fr_1fr_1fr_1fr_1fr_1fr] items-center gap-2 py-2 px-3">
+              {/* Image */}
+              <div className="relative">
+                <img
+                  className={`w-12 h-12 object-cover rounded ${!item.inStock ? "opacity-50 grayscale" : ""}`}
+                  src={item.images?.[0] || "/placeholder.png"}
+                  alt={item.name}
+                />
+                {!item.inStock && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] px-1 py-0.5 rounded font-bold">
+                    OUT
+                  </span>
+                )}
+              </div>
+              {/* Name */}
+              <div>
+                <p className="font-medium text-gray-800">{item.name}</p>
+                <p className="text-xs text-gray-400">{item.subCategory}</p>
+              </div>
+              {/* Category */}
+              <p className="text-gray-600">{item.category}</p>
+              {/* Price */}
+              <p className="text-gray-700">From {currency}{item.price}</p>
+              {/* Stock */}
+              <div className="flex justify-center">
+                <button
+                  onClick={() => toggleStock(item._id, item.inStock)}
+                  className={`px-3 py-1 rounded-full text-xs font-semibold border transition-all ${item.inStock
+                      ? "bg-green-100 text-green-700 border-green-400 hover:bg-red-100 hover:text-red-600 hover:border-red-400"
+                      : "bg-red-100 text-red-600 border-red-400 hover:bg-green-100 hover:text-green-700 hover:border-green-400"
+                    }`}
+                >
+                  {item.inStock ? "In Stock" : "Out of Stock"}
+                </button>
+              </div>
+              {/* Edit */}
+              <p
+                onClick={() => navigate(`/edit/${item._id}`)}
+                className="text-center cursor-pointer text-blue-500 hover:text-blue-700 font-medium"
               >
-                {item.inStock ? "In Stock" : "Out of Stock"}
-              </button>
+                Edit
+              </p>
+              {/* Delete */}
+              <p
+                onClick={() => removeProduct(item._id)}
+                className="text-center cursor-pointer text-red-500 hover:text-red-700 text-lg font-bold"
+              >
+                ✕
+              </p>
             </div>
 
-            {/* Edit */}
-            <p
-              onClick={() => navigate(`/edit/${item._id}`)}
-              className="text-center cursor-pointer text-blue-500 hover:text-blue-700 font-medium"
-            >
-              Edit
-            </p>
+            {/* Mobile card (below md) */}
+            <div className="md:hidden flex gap-3 p-3">
+              {/* Left: image */}
+              <div className="relative flex-shrink-0">
+                <img
+                  className={`w-16 h-16 object-cover rounded ${!item.inStock ? "opacity-50 grayscale" : ""}`}
+                  src={item.images?.[0] || "/placeholder.png"}
+                  alt={item.name}
+                />
+                {!item.inStock && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] px-1 py-0.5 rounded font-bold">
+                    OUT
+                  </span>
+                )}
+              </div>
 
-            {/* Delete */}
-            <p
-              onClick={() => removeProduct(item._id)}
-              className="text-center cursor-pointer text-red-500 hover:text-red-700 text-lg font-bold"
-            >
-              ✕
-            </p>
+              {/* Right: details + actions */}
+              <div className="flex-1 min-w-0">
+                {/* Name & sub-category */}
+                <p className="font-semibold text-gray-800 truncate">{item.name}</p>
+                <p className="text-xs text-gray-400">{item.subCategory}</p>
+                <p className="text-xs text-gray-500 mt-0.5">{item.category}</p>
+                <p className="text-sm font-medium text-gray-700 mt-1">
+                  From {currency}{item.price}
+                </p>
+
+                {/* Action row */}
+                <div className="flex items-center gap-2 mt-2 flex-wrap">
+                  {/* Stock toggle */}
+                  <button
+                    onClick={() => toggleStock(item._id, item.inStock)}
+                    className={`px-2.5 py-1 rounded-full text-xs font-semibold border transition-all ${item.inStock
+                        ? "bg-green-100 text-green-700 border-green-400"
+                        : "bg-red-100 text-red-600 border-red-400"
+                      }`}
+                  >
+                    {item.inStock ? "In Stock" : "Out of Stock"}
+                  </button>
+
+                  {/* Edit */}
+                  <button
+                    onClick={() => navigate(`/edit/${item._id}`)}
+                    className="px-2.5 py-1 rounded-full text-xs font-semibold border border-blue-300 text-blue-500 bg-blue-50"
+                  >
+                    Edit
+                  </button>
+
+                  {/* Delete */}
+                  <button
+                    onClick={() => removeProduct(item._id)}
+                    className="px-2.5 py-1 rounded-full text-xs font-semibold border border-red-300 text-red-500 bg-red-50"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         ))}
 
