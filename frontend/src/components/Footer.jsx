@@ -1,43 +1,63 @@
 import React from "react";
 import { assets } from "../assets/assets";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <div>
-      <div className="flex flex-col sm:grid grid-cols-[3fr_1fr_1fr] gap-14 my-10 mt-40 text-sm">
-        <div>
-          <img src={assets.logo} className="mb-5 w-32" alt="PureNature Logo" />
-          <p className="w-full md:w-2/3 text-gray-600">
-            PureNature brings you the finest organic food products and
-            handcrafted natural goods — sourced directly from farms and artisans
-            who share our passion for clean, honest living. No additives. No
-            compromise.
-          </p>
+    <footer className="mt-20 bg-gray-900 text-gray-300 rounded-t-3xl overflow-hidden">
+      <div className="px-6 sm:px-12 pt-12 pb-8">
+        {/* Top grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 mb-10">
+          {/* Brand */}
+          <div>
+            <img src={assets.logo} className="mb-5 w-32 brightness-0 invert" alt="PureNature Logo" />
+            <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
+              PureNature brings you the finest organic food products and
+              handcrafted natural goods — sourced directly from farms and
+              artisans who share our passion for clean, honest living.
+            </p>
+            {/* Social icons (placeholder) */}
+            <div className="flex gap-3 mt-5">
+              {["📘", "📸", "🐦"].map((icon, i) => (
+                <div key={i} className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 transition-colors flex items-center justify-center text-sm cursor-pointer">
+                  {icon}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Company */}
+          <div>
+            <p className="text-white font-semibold mb-5 text-sm uppercase tracking-widest">Company</p>
+            <ul className="flex flex-col gap-2.5 text-sm text-gray-400">
+              {["Home", "About Us", "Delivery Info", "Privacy Policy"].map((item) => (
+                <li key={item}>
+                  <span className="hover:text-[#6ee7a0] cursor-pointer transition-colors">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Contact */}
+          <div>
+            <p className="text-white font-semibold mb-5 text-sm uppercase tracking-widest">Get In Touch</p>
+            <ul className="flex flex-col gap-2.5 text-sm text-gray-400">
+              <li>📞 +91 98765 43210</li>
+              <li>✉️ hello@purenature.in</li>
+              <li className="mt-2 text-xs text-gray-500 leading-relaxed">
+                42 Green Valley Rd, Bengaluru - 560001
+              </li>
+            </ul>
+          </div>
         </div>
-        <div>
-          <p className="text-xl font-medium mb-5">COMPANY</p>
-          <ul className="flex flex-col gap-1 text-gray-600">
-            <li>Home</li>
-            <li>About Us</li>
-            <li>Delivery Info</li>
-            <li>Privacy Policy</li>
-          </ul>
-        </div>
-        <div>
-          <p className="text-xl font-medium mb-5">GET IN TOUCH</p>
-          <ul className="flex flex-col gap-1 text-gray-600">
-            <li>+91 98765 43210</li>
-            <li>hello@purenature.in</li>
-          </ul>
+
+        {/* Bottom bar */}
+        <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-500">
+          <p>Copyright 2027 © purenature.in — All rights reserved.</p>
+          <p className="text-gray-600">Made with 🌿 for natural living</p>
         </div>
       </div>
-      <div>
-        <hr />
-        <p className="py-5 text-sm text-center text-gray-500">
-          Copyright 2027 © purenature.in — All rights reserved.
-        </p>
-      </div>
-    </div>
+    </footer>
   );
 };
 

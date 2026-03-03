@@ -4,52 +4,65 @@ import { Link } from "react-router-dom";
 
 const Hero = () => {
   return (
-    <div className="flex flex-col sm:flex-row border border-gray-200 rounded-lg overflow-hidden">
-      {/* Left Side - Text */}
-      <div className="w-full sm:w-1/2 flex items-center justify-center py-16 px-8 sm:py-0 bg-white order-2 sm:order-1">
-        <div className="text-[#414141] max-w-sm">
-          <div className="flex items-center gap-2 mb-2">
-            <p className="w-8 md:w-11 h-[2px] bg-[#414141]"></p>
-            <p className="font-medium text-xs md:text-sm tracking-widest uppercase">
-              Our Fresh Picks
-            </p>
+    <section className="relative flex flex-col sm:flex-row rounded-2xl overflow-hidden bg-gradient-to-br from-[#e8f5ee] via-[#f4fbf6] to-[#fdf9f0] min-h-[420px] sm:min-h-[480px]">
+      {/* Decorative blobs */}
+      <div className="absolute -top-10 -left-10 w-48 h-48 bg-[#2d7a4f]/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-yellow-100/50 rounded-full blur-3xl pointer-events-none" />
+
+      {/* Left Side — Text */}
+      <div className="relative w-full sm:w-1/2 flex items-center justify-center py-12 px-8 sm:py-0 order-2 sm:order-1 z-10">
+        <div className="text-[#1a1a1a] max-w-sm w-full">
+          {/* Tag */}
+          <div className="inline-flex items-center gap-2 bg-[#2d7a4f]/10 text-[#2d7a4f] text-xs font-semibold px-3 py-1.5 rounded-full mb-4 tracking-wide uppercase">
+            <span>🌿</span> Farm Fresh · Organic · Natural
           </div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold leading-tight mb-4">
-            Pure &amp; Natural <br /> Products
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-4 text-gray-900">
+            Pure &amp; Natural <br />
+            <span className="text-[#2d7a4f]">Products</span>
           </h1>
 
-          <p className="text-sm text-gray-500 mb-6 leading-relaxed">
-            Freshly sourced organic food, spices, and natural goods — delivered
-            straight to your door.
+          <p className="text-sm text-gray-500 mb-8 leading-relaxed">
+            Freshly sourced organic food, spices, and natural goods —
+            delivered straight to your door with no additives, no compromise.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3">
-            <Link
-              to="/collection"
-              className="bg-black text-white text-sm px-8 py-3 text-center hover:bg-gray-800 transition-colors"
-            >
-              SHOP NOW
+            <Link to="/collection" className="btn-primary text-center justify-center">
+              🛒 Shop Now
             </Link>
-            <Link
-              to="/about"
-              className="border border-gray-400 text-gray-700 text-sm px-8 py-3 text-center hover:bg-gray-50 transition-colors"
-            >
-              LEARN MORE
+            <Link to="/about" className="btn-outline text-center justify-center">
+              Learn More
             </Link>
+          </div>
+
+          {/* Trust badges */}
+          <div className="flex items-center gap-5 mt-8 text-xs text-gray-400">
+            <div className="flex items-center gap-1.5">
+              <span className="w-4 h-4 bg-[#e8f5ee] rounded-full flex items-center justify-center text-[10px]">✓</span>
+              100% Organic
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="w-4 h-4 bg-[#e8f5ee] rounded-full flex items-center justify-center text-[10px]">✓</span>
+              Free Delivery
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="w-4 h-4 bg-[#e8f5ee] rounded-full flex items-center justify-center text-[10px]">✓</span>
+              24/7 Support
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Right Side - Image */}
-      <div className="w-full sm:w-1/2 order-1 sm:order-2 h-full">
+      {/* Right Side — Image */}
+      <div className="relative w-full sm:w-1/2 order-1 sm:order-2 flex items-center justify-center min-h-[220px] sm:min-h-0">
         <img
-          className="w-full h-full object-contain scale-125 -translate-y-4"
+          className="w-full h-full object-contain max-h-[300px] sm:max-h-none sm:scale-110 sm:-translate-y-2 drop-shadow-lg"
           src={assets.baner}
           alt="Fresh Natural Products"
         />
       </div>
-    </div>
+    </section>
   );
 };
 

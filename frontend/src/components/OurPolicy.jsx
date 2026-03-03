@@ -1,42 +1,44 @@
 import React from "react";
 import { assets } from "../assets/assets";
 
+const policies = [
+  {
+    icon: assets.exchange_icon,
+    title: "100% Natural & Organic",
+    desc: "All products are naturally sourced with no harmful chemicals",
+    emoji: "🌿",
+  },
+  {
+    icon: assets.quality_icon,
+    title: "Fresh Quality Guarantee",
+    desc: "We ensure every product meets our strict freshness standards",
+    emoji: "✅",
+  },
+  {
+    icon: assets.support_img,
+    title: "24/7 Customer Support",
+    desc: "Our team is always here to help you with any queries",
+    emoji: "💬",
+  },
+];
+
 const OurPolicy = () => {
   return (
-    <div className="flex flex-col sm:flex-row justify-around gap-12 sm:gap-2 text-center py-20 text-xs sm:text-sm md:text-base text-gray-700">
-      <div>
-        <img
-          src={assets.exchange_icon}
-          className="w-12 m-auto mb-5"
-          alt="100% Natural"
-        />
-        <p className="font-semibold">100% Natural & Organic</p>
-        <p className="text-gray-400">
-          All products are naturally sourced with no harmful chemicals
-        </p>
-      </div>
-      <div>
-        <img
-          src={assets.quality_icon}
-          className="w-12 m-auto mb-5"
-          alt="Quality Guarantee"
-        />
-        <p className="font-semibold">Fresh Quality Guarantee</p>
-        <p className="text-gray-400">
-          We ensure every product meets our strict freshness standards
-        </p>
-      </div>
-      <div>
-        <img
-          src={assets.support_img}
-          className="w-12 m-auto mb-5"
-          alt="24/7 Support"
-        />
-        <p className="font-semibold">24/7 Customer Support</p>
-        <p className="text-gray-400">
-          Our team is always here to help you with any queries
-        </p>
-      </div>
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 py-16">
+      {policies.map((p) => (
+        <div
+          key={p.title}
+          className="card flex flex-col items-center text-center p-6 gap-4 hover:shadow-md transition-shadow duration-200"
+        >
+          <div className="w-16 h-16 rounded-2xl bg-[#e8f5ee] flex items-center justify-center">
+            <img src={p.icon} className="w-8" alt={p.title} />
+          </div>
+          <div>
+            <p className="font-semibold text-gray-800 mb-1">{p.title}</p>
+            <p className="text-gray-400 text-sm leading-relaxed">{p.desc}</p>
+          </div>
+        </div>
+      ))}
     </div>
   );
 };

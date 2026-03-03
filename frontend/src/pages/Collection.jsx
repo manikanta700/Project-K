@@ -71,164 +71,115 @@ const Collection = () => {
     sortProduct();
   }, [sortType]);
 
+  const categories = ["Food Products", "Natural Products", "Beverages"];
+  const subcategories = [
+    "Instant pickles", "Dry Fruits & Nuts", "Spices & Herbs",
+    "Oils & Ghee", "Soaps & Cleansers", "Hair Care",
+    "Herbal Teas", "Health Drinks",
+  ];
+
   return (
-    <div className="flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 border-t">
-      {/*Filter options */}
-      <div className="min-w-60">
-        <p
+    <div className="flex flex-col sm:flex-row gap-6 pt-8 pb-16">
+      {/* Filter Sidebar */}
+      <div className="sm:min-w-56 sm:max-w-56">
+        {/* Filter toggle header (mobile) */}
+        <button
           onClick={() => setShowFilter(!showFilter)}
-          className="my-2 text-xl flex items-center cursor-pointer gap-2"
+          className="flex items-center justify-between w-full sm:w-auto sm:cursor-default mb-3"
         >
-          FILTERS
-        </p>
-        <img
-          className={`h-3 sm:hidden ${showFilter ? "rotate-90" : ""}`}
-          src={assets.dropdown_icon}
-          alt=""
-        />
-        {/* Category Filter */}
-        <div
-          className={`border border-gray-300 p1-5 py-3 mt-6 ${showFilter ? "" : "hidden"} sm:block`}
-        >
-          <p className="mb-3 text-sm font-medium">CATEGORIES</p>
-          <div className="flex flex-col gap-2 tex-sm font-ligh text-gray-700">
-            <p className="flex gap-2">
-              <input
-                className="w-3"
-                type="checkbox"
-                onChange={toggleCategory}
-                value={"Food Products"}
-              />
-              Food Products
-            </p>
-            <p className="flex gap-2">
-              <input
-                className="w-3"
-                type="checkbox"
-                onChange={toggleCategory}
-                value={"Natural Products"}
-              />
-              Natural Products
-            </p>
-            <p className="flex gap-2">
-              <input
-                className="w-3"
-                type="checkbox"
-                onChange={toggleCategory}
-                value={"Beverages"}
-              />
-              Beverages
-            </p>
+          <p className="font-bold text-gray-800 text-base tracking-wide uppercase">
+            Filters
+          </p>
+          <img
+            className={`h-3 sm:hidden transition-transform duration-200 ${showFilter ? "rotate-90" : ""}`}
+            src={assets.dropdown_icon}
+            alt=""
+          />
+        </button>
+
+        {/* Filter panels */}
+        <div className={`flex flex-col gap-4 ${showFilter ? "block" : "hidden"} sm:block`}>
+          {/* Category */}
+          <div className="card p-4">
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">Categories</p>
+            <div className="flex flex-col gap-2.5">
+              {categories.map((cat) => (
+                <label key={cat} className="flex items-center gap-2.5 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    onChange={toggleCategory}
+                    value={cat}
+                    className="w-4 h-4 accent-[#2d7a4f] rounded"
+                  />
+                  <span className="text-sm text-gray-600 group-hover:text-[#2d7a4f] transition-colors">
+                    {cat}
+                  </span>
+                </label>
+              ))}
+            </div>
           </div>
-        </div>
-        {/* Subcategory filters */}
-        <div
-          className={`border border-gray-300 p1-5 py-3 mt-6 ${showFilter ? "" : "hidden"} sm:block`}
-        >
-          <p className="mb-3 text-sm font-medium">TYPE</p>
-          <div className="flex flex-col gap-2 tex-sm font-ligh text-gray-700">
-            <p className="flex gap-2">
-              <input
-                className="w-3"
-                type="checkbox"
-                onChange={toggleSubCategory}
-                value={"Instant pickles"}
-              />
-              Instant pickles
-            </p>
-            <p className="flex gap-2">
-              <input
-                className="w-3"
-                type="checkbox"
-                onChange={toggleSubCategory}
-                value={"Dry Fruits & Nuts"}
-              />
-              Dry Fruits & Nuts
-            </p>
-            <p className="flex gap-2">
-              <input
-                className="w-3"
-                type="checkbox"
-                onChange={toggleSubCategory}
-                value={"Spices & Herbs"}
-              />
-              Spices & Herbs
-            </p>
-            <p className="flex gap-2">
-              <input
-                className="w-3"
-                type="checkbox"
-                onChange={toggleSubCategory}
-                value={"Oils & Ghee"}
-              />
-              Oils & Ghee
-            </p>
-            <p className="flex gap-2">
-              <input
-                className="w-3"
-                type="checkbox"
-                onChange={toggleSubCategory}
-                value={"Soaps & Cleansers"}
-              />
-              Soaps & Cleansers
-            </p>
-            <p className="flex gap-2">
-              <input
-                className="w-3"
-                type="checkbox"
-                onChange={toggleSubCategory}
-                value={"Hair Care"}
-              />
-              Hair Care
-            </p>
-            <p className="flex gap-2">
-              <input
-                className="w-3"
-                type="checkbox"
-                onChange={toggleSubCategory}
-                value={"Herbal Teas"}
-              />
-              Herbal Teas
-            </p>
-            <p className="flex gap-2">
-              <input
-                className="w-3"
-                type="checkbox"
-                onChange={toggleSubCategory}
-                value={"Health Drinks"}
-              />
-              Health Drinks
-            </p>
+
+          {/* Subcategory */}
+          <div className="card p-4">
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">Type</p>
+            <div className="flex flex-col gap-2.5">
+              {subcategories.map((sub) => (
+                <label key={sub} className="flex items-center gap-2.5 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    onChange={toggleSubCategory}
+                    value={sub}
+                    className="w-4 h-4 accent-[#2d7a4f] rounded"
+                  />
+                  <span className="text-sm text-gray-600 group-hover:text-[#2d7a4f] transition-colors">
+                    {sub}
+                  </span>
+                </label>
+              ))}
+            </div>
           </div>
         </div>
       </div>
-      {/*Right side */}
+
+      {/* Products area */}
       <div className="flex-1">
-        <div className="flex justify-between text-base sm:text-2xl mb-4">
-          <Title text1={"ALL"} text2={"PRODUCTS"}></Title>
-          {/*Product sort */}
+        {/* Header + sort */}
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+          <div className="text-xl sm:text-2xl">
+            <Title text1={"ALL"} text2={"PRODUCTS"} />
+          </div>
           <select
             onChange={(e) => setSortType(e.target.value)}
-            className="border-2 border-gray-300 text-sm px-2"
+            className="border border-gray-200 rounded-xl text-sm px-3 py-2 outline-none focus:border-[#2d7a4f] bg-white text-gray-600 transition-colors"
           >
-            <option value="relevant">Sort by: Relevant</option>
-            <option value="low-high">Sort by: Low to High</option>
-            <option value="high-low">Sort by: High to Low</option>
+            <option value="relevant">Sort: Relevant</option>
+            <option value="low-high">Price: Low → High</option>
+            <option value="high-low">Price: High → Low</option>
           </select>
         </div>
-        {/*Map Products */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6">
-          {filterProducts.map((item, index) => (
-            <ProductItem
-              key={index}
-              name={item.name}
-              id={item._id}
-              price={item.price}
-              image={item.images}
-              inStock={item.inStock}
-            />
-          ))}
-        </div>
+
+        {/* Product grid */}
+        {filterProducts.length === 0 ? (
+          <div className="card flex flex-col items-center justify-center py-20 text-center">
+            <p className="text-4xl mb-3">🔍</p>
+            <p className="font-semibold text-gray-700">No products found</p>
+            <p className="text-sm text-gray-400 mt-1">Try adjusting your filters</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {filterProducts.map((item, index) => (
+              <ProductItem
+                key={index}
+                name={item.name}
+                id={item._id}
+                price={item.price}
+                image={item.images}
+                inStock={item.inStock}
+                sizes={item.sizes}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

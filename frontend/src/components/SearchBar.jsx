@@ -9,32 +9,32 @@ const SearchBar = () => {
   const location = useLocation();
 
   useEffect(() => {
-    if(location.pathname.includes('collection') && showSearch){
+    if (location.pathname.includes("collection") && showSearch) {
       setVisible(true);
-    }
-    else{
+    } else {
       setVisible(false);
     }
-  }, [location])
+  }, [location, showSearch]);
 
   return showSearch && visible ? (
-    <div className="border-t border-b bg-gray-50 text-center">
-      <div className="inline-flex items-center justify-center border border-gray-400 px-5 py-2 my-5 mx-3 rounded-full">
+    <div className="bg-[#e8f5ee] py-4 px-4 sm:px-0">
+      <div className="flex items-center gap-3 max-w-md mx-auto bg-white rounded-full px-4 py-2.5 shadow-sm border border-[#2d7a4f]/20 focus-within:border-[#2d7a4f] transition-colors">
+        <img className="w-4 text-gray-400" src={assets.search_icon} alt="" />
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 outline-none bg-inherit text-sm"
+          className="flex-1 outline-none bg-transparent text-sm placeholder-gray-400"
           type="text"
-          placeholder="Search"
+          placeholder="Search products…"
+          autoFocus
         />
-        <img className="w-4" src={assets.search_icon} alt="" />
+        <button
+          onClick={() => setShowSearch(false)}
+          className="text-gray-400 hover:text-gray-600 transition-colors p-1"
+        >
+          <img className="w-3" src={assets.cross_icon} alt="Close" />
+        </button>
       </div>
-      <img
-        onClick={() => setShowSearch(false)}
-        className="inline w-3 cursor-pointer"
-        src={assets.cross_icon}
-        alt=""
-      />
     </div>
   ) : null;
 };

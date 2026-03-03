@@ -55,81 +55,92 @@ const Login = () => {
   });
 
   return (
-    <div>
-      <form
-        onSubmit={onSubmitHandler}
-        className="flex flex-col items-center w-[90%] sm:max-w-96 m-auto mt-14 gap-4 text-gray-800"
-      >
-        <div className="inline-flex items-center gap-2 mb-2 mt-10">
-          <p className="prata-regular text-3xl">{currentState}</p>
-          <hr className="border-none h-[1.5px] w-8 bg-gray-800" />
+    <div className="min-h-[80vh] flex items-center justify-center bg-gradient-to-br from-[#e8f5ee] to-[#faf8f4] px-4 py-12">
+      <div className="card p-8 w-full max-w-md">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-14 h-14 bg-[#e8f5ee] rounded-2xl mb-4 text-2xl">
+            🌿
+          </div>
+          <h1 className="prata-regular text-2xl text-gray-900">
+            {currentState === "Login" ? "Welcome Back" : "Create Account"}
+          </h1>
+          <p className="text-gray-400 text-sm mt-1">
+            {currentState === "Login"
+              ? "Sign in to your PureNature account"
+              : "Join our natural living community"}
+          </p>
         </div>
 
-        {currentState === "Login" ? null : (
+        <form onSubmit={onSubmitHandler} className="flex flex-col gap-4">
+          {currentState !== "Login" && (
+            <input
+              onChange={(e) => setName(e.target.value)}
+              value={name}
+              type="text"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm outline-none focus:border-[#2d7a4f] transition-colors bg-gray-50 focus:bg-white"
+              placeholder="Your full name"
+              required
+            />
+          )}
+
           <input
-            onChange={(e) => setName(e.target.value)}
-            value={name}
-            type="text"
-            className="w-full px-3 py-2 border border-gray-800 outline-none"
-            placeholder="Name"
+            onChange={(e) => setEmail(e.target.value)}
+            value={email}
+            type="email"
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm outline-none focus:border-[#2d7a4f] transition-colors bg-gray-50 focus:bg-white"
+            placeholder="Email address"
             required
           />
-        )}
 
-        <input
-          onChange={(e) => setEmail(e.target.value)}
-          value={email}
-          type="email"
-          className="w-full px-3 py-2 border border-gray-800 outline-none"
-          placeholder="Email"
-          required
-        />
+          <input
+            onChange={(e) => setPassword(e.target.value)}
+            value={password}
+            type="password"
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm outline-none focus:border-[#2d7a4f] transition-colors bg-gray-50 focus:bg-white"
+            placeholder="Password"
+            required
+          />
 
-        <input
-          onChange={(e) => setPassword(e.target.value)}
-          value={password}
-          type="password"
-          className="w-full px-3 py-2 border border-gray-800 outline-none"
-          placeholder="Password"
-          required
-        />
+          <div className="flex justify-between text-xs text-gray-500 mt-1">
+            <span className="cursor-pointer hover:text-[#2d7a4f] transition-colors">
+              Forgot password?
+            </span>
+            {currentState === "Login" ? (
+              <span
+                onClick={() => setCurrentState("Sign Up")}
+                className="cursor-pointer text-[#2d7a4f] font-medium hover:underline"
+              >
+                Create account →
+              </span>
+            ) : (
+              <span
+                onClick={() => setCurrentState("Login")}
+                className="cursor-pointer text-[#2d7a4f] font-medium hover:underline"
+              >
+                Login here →
+              </span>
+            )}
+          </div>
 
-        <div className="w-full flex justify-between text-sm mt-[-8px]">
-          <p className="cursor-pointer">Forgot your password?</p>
-          {currentState === "Login" ? (
-            <p
-              onClick={() => setCurrentState("Sign Up")}
-              className="cursor-pointer"
-            >
-              Create account
-            </p>
-          ) : (
-            <p
-              onClick={() => setCurrentState("Login")}
-              className="cursor-pointer"
-            >
-              Login Here
-            </p>
-          )}
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="bg-black text-white font-light px-8 py-2 mt-4 flex items-center gap-2 disabled:opacity-70 min-w-[110px] justify-center"
-        >
-          {loading ? (
-            <>
-              <LoadingSpinner size="sm" color="white" />
-              <span>Please wait...</span>
-            </>
-          ) : currentState === "Login" ? (
-            "Sign In"
-          ) : (
-            "Sign Up"
-          )}
-        </button>
-      </form>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-[#2d7a4f] text-white font-semibold py-3 rounded-xl hover:bg-[#235f3d] active:scale-95 transition-all disabled:opacity-70 flex items-center justify-center gap-2 mt-2 text-sm"
+          >
+            {loading ? (
+              <>
+                <LoadingSpinner size="sm" color="white" />
+                <span>Please wait…</span>
+              </>
+            ) : currentState === "Login" ? (
+              "Sign In"
+            ) : (
+              "Create Account"
+            )}
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

@@ -4,27 +4,83 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-
-a.active hr{
-  display: block;
+/* ── Brand Tokens ─────────────────────────────────────── */
+:root {
+  --green-primary: #2d7a4f;
+  --green-light:   #e8f5ee;
+  --green-hover:   #235f3d;
+  --warm-bg:       #faf8f4;
+  --card-bg:       #ffffff;
+  --text-main:     #1a1a1a;
+  --text-muted:    #6b7280;
 }
 
-*{
-  font-family: Outfit;
+/* ── Base ─────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
 }
+
+* {
+  font-family: 'Outfit', sans-serif;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--warm-bg);
+  color: var(--text-main);
+}
+
 .prata-regular {
   font-family: "Prata", serif;
   font-weight: 400;
   font-style: normal;
 }
 
-::-webkit-scrollbar{
-  display: none;
+/* ── Scrollbar ────────────────────────────────────────── */
+::-webkit-scrollbar { display: none; }
+
+/* ── Active nav link ──────────────────────────────────── */
+a.active hr { display: block; }
+
+@media (max-width: 640px) {
+  a.active {
+    color: var(--green-primary);
+    font-weight: 600;
+  }
 }
 
-@media(max-width:640px){
-  a.active{
-    background-color: black;
-    color: white;
-  }
+/* ── Button utilities ─────────────────────────────────── */
+.btn-primary {
+  @apply inline-flex items-center justify-center gap-2
+         bg-[#2d7a4f] text-white font-medium
+         px-6 py-3 rounded-full
+         hover:bg-[#235f3d] active:scale-95
+         transition-all duration-200 text-sm;
+}
+
+.btn-outline {
+  @apply inline-flex items-center justify-center gap-2
+         border border-[#2d7a4f] text-[#2d7a4f] font-medium
+         px-6 py-3 rounded-full
+         hover:bg-[#2d7a4f] hover:text-white active:scale-95
+         transition-all duration-200 text-sm;
+}
+
+.btn-dark {
+  @apply inline-flex items-center justify-center gap-2
+         bg-gray-900 text-white font-medium
+         px-6 py-3 rounded-full
+         hover:bg-black active:scale-95
+         transition-all duration-200 text-sm;
+}
+
+/* ── Card ─────────────────────────────────────────────── */
+.card {
+  @apply bg-white rounded-2xl shadow-sm border border-gray-100;
+}
+
+/* ── Input focus ──────────────────────────────────────── */
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid var(--green-primary);
+  outline-offset: 0;
 }
