@@ -12,11 +12,11 @@ const NewsletterBox = () => {
       <div className="absolute -bottom-8 -right-8 w-56 h-56 bg-white/5 rounded-full" />
 
       <p className="relative text-2xl sm:text-3xl font-bold mb-2">
-        🌿 Subscribe &amp; Get 20% Off
+        🏠 Subscribe & Get 20% Off
       </p>
       <p className="relative text-green-100 text-sm sm:text-base mt-2 mb-8 max-w-md mx-auto leading-relaxed">
-        Join our community and be the first to know about fresh arrivals,
-        seasonal offers, and natural living tips.
+        Join our family and be the first to know about fresh batches,
+        seasonal specials, and exclusive homemade delicacies.
       </p>
 
       <form

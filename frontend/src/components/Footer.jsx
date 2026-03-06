@@ -10,13 +10,13 @@ const Footer = () => {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 mb-10">
           {/* Brand */}
           <div>
-            <img src={assets.logo} className="mb-5 w-32 brightness-0 invert" alt="PureNature Logo" />
+            <img src={assets.logo} className="mb-5 w-32 brightness-0 invert" alt="Logo" />
             <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
-              PureNature brings you the finest organic food products and
-              handcrafted natural goods — sourced directly from farms and
-              artisans who share our passion for clean, honest living.
+              Homemade with love — we craft authentic pickles, traditional
+              powders, and handmade food using age-old family recipes and
+              only the freshest ingredients.
             </p>
-            {/* Social icons (placeholder) */}
+            {/* Social icons */}
             <div className="flex gap-3 mt-5">
               {["📘", "📸", "🐦"].map((icon, i) => (
                 <div key={i} className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 transition-colors flex items-center justify-center text-sm cursor-pointer">
@@ -54,7 +54,7 @@ const Footer = () => {
         {/* Bottom bar */}
         <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-500">
           <p>Copyright 2027 © purenature.in — All rights reserved.</p>
-          <p className="text-gray-600">Made with 🌿 for natural living</p>
+          <p className="text-gray-600">Made with 🏠 love & tradition</p>
         </div>
       </div>
     </footer>

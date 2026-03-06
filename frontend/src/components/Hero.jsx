@@ -14,17 +14,17 @@ const Hero = () => {
         <div className="text-[#1a1a1a] max-w-sm w-full">
           {/* Tag */}
           <div className="inline-flex items-center gap-2 bg-[#2d7a4f]/10 text-[#2d7a4f] text-xs font-semibold px-3 py-1.5 rounded-full mb-4 tracking-wide uppercase">
-            <span>🌿</span> Farm Fresh · Organic · Natural
+            <span>🏠</span> Homemade · Traditional · Fresh
           </div>
 
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-4 text-gray-900">
-            Pure &amp; Natural <br />
-            <span className="text-[#2d7a4f]">Products</span>
+            Taste of Home, <br />
+            <span className="text-[#2d7a4f]">Delivered Fresh</span>
           </h1>
 
           <p className="text-sm text-gray-500 mb-8 leading-relaxed">
-            Freshly sourced organic food, spices, and natural goods —
-            delivered straight to your door with no additives, no compromise.
+            Authentic homemade pickles, traditional powders, and handcrafted
+            food — made with love, packed with flavour, delivered to your door.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3">
@@ -32,7 +32,7 @@ const Hero = () => {
               🛒 Shop Now
             </Link>
             <Link to="/about" className="btn-outline text-center justify-center">
-              Learn More
+              Our Story
             </Link>
           </div>
 
@@ -40,7 +40,7 @@ const Hero = () => {
           <div className="flex items-center gap-5 mt-8 text-xs text-gray-400">
             <div className="flex items-center gap-1.5">
               <span className="w-4 h-4 bg-[#e8f5ee] rounded-full flex items-center justify-center text-[10px]">✓</span>
-              100% Organic
+              No Preservatives
             </div>
             <div className="flex items-center gap-1.5">
               <span className="w-4 h-4 bg-[#e8f5ee] rounded-full flex items-center justify-center text-[10px]">✓</span>
@@ -59,7 +59,7 @@ const Hero = () => {
         <img
           className="w-full h-full object-contain max-h-[300px] sm:max-h-none sm:scale-110 sm:-translate-y-2 drop-shadow-lg"
           src={assets.baner}
-          alt="Fresh Natural Products"
+          alt="Homemade Food Products"
         />
       </div>
     </section>

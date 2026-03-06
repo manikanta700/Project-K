@@ -169,6 +169,48 @@ const toggleStock = async (req, res) => {
   }
 };
 
+// Clean up orphaned Cloudinary images (not used by any product)
+const cleanCloudinaryCache = async (req, res) => {
+  try {
+    // 1. Collect all image URLs currently used by products
+    const products = await productModel.find({}, "images");
+    const usedUrls = new Set();
+    products.forEach((p) => p.images?.forEach((url) => usedUrls.add(url)));
+
+    // 2. Fetch all resources from Cloudinary (handles pagination)
+    let deletedCount = 0;
+    let nextCursor = null;
+
+    do {
+      const params = { resource_type: "image", max_results: 100 };
+      if (nextCursor) params.next_cursor = nextCursor;
+
+      const result = await cloudinary.api.resources(params);
+      nextCursor = result.next_cursor || null;
+
+      // 3. Delete any resource whose secure_url is NOT in usedUrls
+      const toDelete = result.resources.filter(
+        (r) => !usedUrls.has(r.secure_url)
+      );
+
+      if (toDelete.length > 0) {
+        const publicIds = toDelete.map((r) => r.public_id);
+        await cloudinary.api.delete_resources(publicIds);
+        deletedCount += toDelete.length;
+      }
+    } while (nextCursor);
+
+    res.json({
+      success: true,
+      message: `Cleaned up ${deletedCount} unused image${deletedCount !== 1 ? "s" : ""} from Cloudinary.`,
+      deletedCount,
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
 export {
   listProducts,
   addProduct,
@@ -176,4 +218,5 @@ export {
   removeProduct,
   singleProduct,
   toggleStock,
+  cleanCloudinaryCache,
 };

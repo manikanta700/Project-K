@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 const List = () => {
   const [list, setList] = useState([]);
+  const [clearing, setClearing] = useState(false);
   const navigate = useNavigate();
 
   const fetchList = async () => {
@@ -79,9 +80,55 @@ const List = () => {
     }
   };
 
+  const clearCloudinaryCache = async () => {
+    const confirmed = window.confirm(
+      "This will permanently delete all Cloudinary images not linked to any product. Continue?"
+    );
+    if (!confirmed) return;
+    setClearing(true);
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        backendUrl + "/api/product/cleancache",
+        {},
+        { headers: { token } },
+      );
+      if (response.data.success) {
+        toast.success(response.data.message);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to clean cache: " + error.message);
+    } finally {
+      setClearing(false);
+    }
+  };
+
   return (
     <>
-      <p className="mb-2 font-semibold text-gray-700">All Products List</p>
+      <div className="flex items-center justify-between mb-3">
+        <p className="font-semibold text-gray-700">All Products List</p>
+        <button
+          onClick={clearCloudinaryCache}
+          disabled={clearing}
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-red-300 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+          title="Delete orphaned Cloudinary images not linked to any product"
+        >
+          {clearing ? (
+            <>
+              <svg className="animate-spin w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+              </svg>
+              Clearing…
+            </>
+          ) : (
+            <>🗑️ Clear Cache Photos</>
+          )}
+        </button>
+      </div>
       <div className="flex flex-col gap-2">
 
         {/* ── Desktop table header (md+) ── */}
@@ -131,8 +178,8 @@ const List = () => {
                 <button
                   onClick={() => toggleStock(item._id, item.inStock)}
                   className={`px-3 py-1 rounded-full text-xs font-semibold border transition-all ${item.inStock
-                      ? "bg-green-100 text-green-700 border-green-400 hover:bg-red-100 hover:text-red-600 hover:border-red-400"
-                      : "bg-red-100 text-red-600 border-red-400 hover:bg-green-100 hover:text-green-700 hover:border-green-400"
+                    ? "bg-green-100 text-green-700 border-green-400 hover:bg-red-100 hover:text-red-600 hover:border-red-400"
+                    : "bg-red-100 text-red-600 border-red-400 hover:bg-green-100 hover:text-green-700 hover:border-green-400"
                     }`}
                 >
                   {item.inStock ? "In Stock" : "Out of Stock"}
@@ -186,8 +233,8 @@ const List = () => {
                   <button
                     onClick={() => toggleStock(item._id, item.inStock)}
                     className={`px-2.5 py-1 rounded-full text-xs font-semibold border transition-all ${item.inStock
-                        ? "bg-green-100 text-green-700 border-green-400"
-                        : "bg-red-100 text-red-600 border-red-400"
+                      ? "bg-green-100 text-green-700 border-green-400"
+                      : "bg-red-100 text-red-600 border-red-400"
                       }`}
                   >
                     {item.inStock ? "In Stock" : "Out of Stock"}

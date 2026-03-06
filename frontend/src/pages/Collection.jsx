@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useMemo } from "react";
 import { ShopContext } from "../context/ShopContext";
 import { assets } from "../assets/assets";
 import Title from "../components/Title";
@@ -71,12 +71,16 @@ const Collection = () => {
     sortProduct();
   }, [sortType]);
 
-  const categories = ["Food Products", "Natural Products", "Beverages"];
-  const subcategories = [
-    "Instant pickles", "Dry Fruits & Nuts", "Spices & Herbs",
-    "Oils & Ghee", "Soaps & Cleansers", "Hair Care",
-    "Herbal Teas", "Health Drinks",
-  ];
+  // Derive filter options dynamically from products in DB
+  const categories = useMemo(
+    () => [...new Set(products.map((p) => p.category).filter(Boolean))].sort(),
+    [products],
+  );
+
+  const subcategories = useMemo(
+    () => [...new Set(products.map((p) => p.subCategory).filter(Boolean))].sort(),
+    [products],
+  );
 
   return (
     <div className="flex flex-col sm:flex-row gap-6 pt-8 pb-16">

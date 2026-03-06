@@ -4,20 +4,20 @@ import { assets } from "../assets/assets";
 const policies = [
   {
     icon: assets.exchange_icon,
-    title: "100% Natural & Organic",
-    desc: "All products are naturally sourced with no harmful chemicals",
-    emoji: "🌿",
+    title: "No Preservatives Added",
+    desc: "Everything is made fresh at home — no artificial colours, chemicals, or preservatives",
+    emoji: "🏠",
   },
   {
     icon: assets.quality_icon,
-    title: "Fresh Quality Guarantee",
-    desc: "We ensure every product meets our strict freshness standards",
+    title: "Freshness Guaranteed",
+    desc: "Each batch is prepared fresh and packed with care to reach you at its best",
     emoji: "✅",
   },
   {
     icon: assets.support_img,
     title: "24/7 Customer Support",
-    desc: "Our team is always here to help you with any queries",
+    desc: "Our team is always here to help you with any questions or orders",
     emoji: "💬",
   },
 ];
