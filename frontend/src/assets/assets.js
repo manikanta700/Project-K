@@ -40,4 +40,3 @@ export const assets = {
   baner,
   nature,
 };
-
