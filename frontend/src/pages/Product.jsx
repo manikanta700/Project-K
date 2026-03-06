@@ -138,8 +138,8 @@ const Product = () => {
             <p>
               100% Natural & Organic — no artificial additives or preservatives.
             </p>
-            <p>Cash on delivery available on this product.</p>
-            <p>Freshness guaranteed or easy return within 7 days.</p>
+            {/* <p>Cash on delivery available on this product.</p>
+            <p>Freshness guaranteed or easy return within 7 days.</p> */}
           </div>
         </div>
       </div>
